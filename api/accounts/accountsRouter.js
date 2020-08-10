@@ -38,6 +38,7 @@ const checkAccountExists = (req, res, next) => {
 
 router.get('/', (req, res) => {
   db('accounts')
+    .limit(req.query.limit)
     .then(accounts => res.status(200).json(accounts))
     .catch(error => {
       console.log(error);

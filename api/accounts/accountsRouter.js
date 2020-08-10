@@ -63,7 +63,7 @@ router.post('/', requireProperties(['name', 'budget']), (req, res) => {
     });
 });
 
-router.put('/:id', requireProperties(['name', 'budget']), (req, res) => {
+router.put('/:id', checkAccountExists, requireProperties(['name', 'budget']), (req, res) => {
   const changes = req.body;
   const accountId = req.params.id;
 
@@ -83,8 +83,16 @@ router.put('/:id', requireProperties(['name', 'budget']), (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
-
+router.delete('/:id', checkAccountExists, (req, res) => {
+  const accountId = req.params.id;
+  db('accounts')
+    .where({ id: accountId })
+    .del()
+    .then(success => res.status(204).end())
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({ message: 'There was an issue deleting the account.', error: error.message });
+    });
 });
 
 module.exports = router;
